@@ -1,0 +1,414 @@
+# jQuery
+
+* 是一个快速、简洁的 JavaScript 库
+
+# 优点
+
+* 轻量级。核心文件才几十kb，不会影响页面加载速度
+* **链式编程、隐式迭代**
+* 对事跨浏览器兼容。基本兼容了现在主流的浏览器样式、动画支持，大大简化了DOM操作
+* 支持插件扩展开发。有着丰富的第三方的插件，例如：树形菜单、日期控件、轮播图等
+* 免费、开源
+
+# 特点
+
+## 隐式迭代
+
+- **遍历内部 DOM 元素（伪数组形式存储）的过程就叫做隐式迭代**
+- 无需自己遍历循环挨个设置相同属性
+
+## 链式编程
+
+* 原因：因为很多jQuery方法直接返回当前的jQuery对象，所以可以接着点出方法；
+
+1. 不返回jQuery对象的方法：val(),html(),text(),attr(), 返回文本字符串；
+2. 返回新的jQuery对象的方法：next() nextAll() parent() children() prev() ...
+3. 剩下基本都是返回当前jQuery对象；
+
+# 入口函数
+
+* 相当于相当于window.onload
+* 注意点：
+  * 等着DOM结构渲染完毕即可执行内部代码，不必等所有外部资源加载完成，jQuery 帮我们完成了封装。
+  * 不同于原生 js 中的 load 事件是等页面文档、外部的js文件、css文件、图片加载完毕才执行内部代码。
+
+```js
+$(function () {}) ;   //第一种
+```
+
+```js
+$(document).ready(function(){});  //第二种
+```
+
+# 顶级对象
+
+* 1.$ 是 jQuery 的别称，在代码中可以使用 jQuery 代替 $，但一般为了方便，通常都直接使用 $ 。
+* 2.$ 是jQuery 的顶级对象， 相当于原生JavaScript中的 window。把元素利用$包装成jQuery对象，就可以调用jQuery 的方法。
+
+# jQuery对象与DOM对象
+
+* 方法使用
+  	只有 jQuery 对象才能使用 jQuery 方法，DOM 对象则使用原生的 JavaScirpt 方法
+* 相互装换
+  	$(DOM对象)；
+    jQuery对象[index]；
+    jQuery对象.get(index)；
+
+# 核心
+
+## jQuery对象访问
+
+### each
+
+```js
+$(DOM).each(function(index,element){});        //第一种
+$.each(object,function(index,elements){});    //第二种
+```
+
+### length
+
+$(DOM).length;  //获得伪数组长度
+
+### get([index])
+
+$(DOM).get(0); //获得第几位索引上的元素
+
+### index([selector|element])
+
+// 搜索匹配的元素，返回相应元素的索引值，从0开始计数
+
+## 数据存储
+
+### data(key,[value])
+
+### removeData([name|list])
+
+# 选择器
+
+## 基本
+
+```js
+$("#id");  $("div");  $(".className");  $("*");  $("selector1,selector2,selectorN")；...
+```
+
+## 层级
+
+```js
+$("ancestor descendant")；    //在给定的祖先元素下匹配所有的后代元素
+$("parent > child");        //在给定的父元素下匹配所有的子元素
+$("prev + next");          //匹配所有紧接在 prev 元素后的 next 元素
+$("prev ~ siblings");     //匹配 prev 元素之后的所有 siblings 元素
+```
+
+## 表单对象属性
+
+```js
+:enabled  $("input:enabled")              //匹配所有可用元素
+:disabled $("input:disabled")            //匹配所有不可用元素
+:checked  $("input:checked")            //匹配所有选中的被选中元素(复选框、单选框等)
+:selected $("select option:selected")  //匹配所有选中的option元素
+```
+
+## 基本筛选器
+
+```js
+$('li:first');  $('li:last');   //第一位 、最后一位
+$('li:eq(index)')；            //查找指定索引的元素
+$('li:odd')                  //索引为奇数
+$('li:even')                //索引为偶数
+//注意:索引是从0开始的
+```
+
+# 筛选
+
+## 过滤
+
+```
+eq(index|-index);      //获取索引为几的数，负数表示从后面开始数
+first()；  last()；    //第一个、最后一个
+hasClass("className") //检查当前的元素是否含有某个特定的类，如果有，则返回true。
+```
+
+## 查找
+
+```js
+parent();       //父级
+parents();     //祖宗
+children();   //子集
+find();      //后代
+siblings(); //兄弟
+prev(); prevAll()；//上一个同辈元素 上面所有兄弟元素
+next();nextAll(); //下一个同辈元素  下面所有兄弟元素
+offsetParent();  //返回第一个匹配元素用于定位的父节点
+```
+
+# 属性
+
+## 属性
+
+```js
+prop(name,[value]) //固定属性
+removeProp(name)
+attr(name,[value]); //自定义属性 一个参数取值，两个参数设值
+removeAttr(name) //删除
+```
+
+## css 类
+
+```js
+addClass(className)          //添加新的class
+removeClass([className])     //删除一个、多个或者全部class
+toggleClass(className)      //切换
+```
+
+## HTML代码/文本/值
+
+```
+无参数取值，有参数设值
+html()
+text()
+val()
+```
+
+# 效果
+
+* 参数：
+  * **speed：**三种预定速度之一的字符串("slow","normal", or "fast")或表示动画时长的毫秒数值(如：1000)
+  * **easing：**(Optional) 用来指定切换效果，默认是"swing"，可用参数"linear"
+  * **fn：**在动画完成时执行的函数，每个元素执行一次。
+  * **opacit：**一个0至1之间表示透明度的数字。
+
+## 基本
+
+```js
+show([speed,[easing],[fn]]);     //显示
+hide([speed,[easing],[fn]]);    //隐藏
+toggle([speed],[easing],[fn]); //显示与隐藏切换
+```
+
+## 滑动slide
+
+```js
+slideDown([speed],[easing],[fn]);  //滑动落下
+slideUp([speed,[easing],[fn]]);    //滑动升起
+slideToggle([speed],[easing],[fn]); //滑动落下与升起的切换
+```
+
+## 淡入淡出fade
+
+```js
+fadeIn([speed],[easing],[fn]);     //淡入
+fadeOut([speed],[easing],[fn]);    //淡出
+fadeToggle([speed,[easing],[fn]]); //淡入淡出切换
+//把所有匹配元素的不透明度以渐进方式调整到指定的不透明度，并在动画完成后可选地触发一个回调函数。
+fadeTo(speed,opacity,[easing],[fn]); 
+```
+
+## 自定义animate
+
+```js
+animate(params,[speed],[easing],[fn]); //params:一组包含作为动画属性和终值的样式属性和及其值的对象
+```
+
+## 其他
+
+### 停止动画stop()
+
+* 动画或者效果一旦触发就会执行，如果多次触发，就造成多个动画或者效果排队执行。
+* 停止排队:stop()
+  (1）stop() 方法用于停止动画或效果。
+  (2)  注意： stop() 写到动画或者效果的前面， 相当于停止结束上一次的动画。
+
+### 延时执行delay()
+
+*  设置一个延时来推迟执行队列中之后的项目。
+
+```js
+delay(duration,[queueName]); 
+//duration:延时时间，单位：毫秒
+//queueName:队列名词，默认是Fx，动画队列。
+```
+
+### 停止当前动画finish()
+
+```js
+/*停止当前正在运行的动画，删除所有排队的动画，并完成匹配元素所有的动画。
+当.finish()在一个元素上被调用，立即停止当前正在运行的动画和所有排队的动画（如果有的话），并且他们的CSS属性设置为它们的目标值（所有动画的目标值）。所有排队的动画将被删除。
+如果第一个参数提供，该字符串表示的队列中的动画将被停止。
+.finish()方法和.stop(true, true)很相似，.stop(true,true)将清除队列，并且目前的动画跳转到其最终值。但是，不同的是，.finish() 会导致所有排队的动画的CSS属性跳转到他们的最终值。*/
+
+finish([queue])
+//queue： 停止动画队列中的名称。
+```
+
+### 关闭当前页面的所有动画
+
+jQuery.fx.off
+关闭页面上所有的动画。
+把这个属性设置为true可以立即关闭所有动画(所有效果会立即执行完毕)。有些情况下可能需要这样，比如：
+你在配置比较低的电脑上使用jQuery。
+当把这个属性设成false之后，可以重新开启所有动画。
+
+# CSS
+
+## css
+
+```js
+css();//一个值获取，两个值设置，一个对象批量设置
+```
+
+## 位置
+
+```js
+offset([obj])
+	//获取距离文档的距离【left，top】 返回一个对象
+	//offset({left:100,top:100}) 设置元素的偏移
+position()
+	//返回被选元素相对于带有定位的父级偏移坐标的对象，如果父级都没有定位，则以文档为准 该为readonly方法
+scrollTop([val])
+	//元素相对于滚动条顶部的距离
+scrollLeft([val])
+	//元素相对于滚动条左边的距离
+```
+
+## 尺寸
+
+```js
+//无参数获取，有参数设置  返回值为number
+width()、height()                     //【只算width和height】
+innerWidth()、innerHeight()          //【包含padding+width】
+outerWidth()、outerHeight()         //【包含padding、border、width】
+outerWidth(true)、outerHeight(true)//【包含padding、border、margin、width】
+```
+
+# 文档处理
+
+## 创建元素
+
+$("<li>新的li标签</li>")
+
+## 内部插入
+
+```js
+ele.append(child);   //在子元素末尾添加
+child.appendTo(ele);
+ele.prepend(child)   //在子元素最前面添加
+child,prependTo(ele);
+```
+
+## 外部插入
+
+```js
+after();  //在该元素前添加
+before(); //在该元素后添加
+```
+
+## 删除
+
+```js
+remove([expr]) //删除该元素本身
+detach([expr]) //与remove()不同的是，所有绑定的事件、附加的数据等都会保留下来。
+//清空里面的子元素
+	element.empty()   //删除匹配的元素集合中所有的子节点
+	element.html("")  //清空匹配的元素内容
+	element.text("")
+```
+
+# 事件
+
+## 页面载入ready(fn)
+
+```js
+$(document).ready(function(){
+  // 在这里写你的代码...
+});
+```
+
+## 事件处理
+
+### on 注册事件
+
+```js
+//on(events,[selector],[data],fn);  
+on("事件1 事件2"，function(){});  //一个或多个事件执行同一个函数
+on({事件1：fn1,事件2：fn2});      //多个事件与函数对应
+on("事件"，"css选择器"，function(){}) //事件委派(托)  css选择器是些被哪个元素委托的对象
+```
+
+### off 事件解绑
+
+```js
+//off(events,[selector],[fn])
+off()；                    //解除全部事件
+off("事件");               //解除指定事件
+off("事件"，"css选择器")；  //解除事件委托
+```
+
+### one 注册事件-只执行一次
+
+* 用法与on相同
+
+### 自动触发事件
+
+```js
+//1.对象调用方法
+$(对象).click();
+
+/*2.trigger(type,[data]) 
+在每一个匹配的元素上触发某类事件。
+这个函数也会导致浏览器同名的默认行为的执行。比如，如果用trigger()触发一个'submit'，则同样会导致浏览器提交表单。如果要阻止这种默认行为，应返回false。
+*/
+$(对象).trigger("focus");      //进入页面中对象会自动获得焦点 默认执行了focus()的获得焦点的方法
+
+/*3.triggerHandler(type, [data])
+这个特别的方法将会触发指定的事件类型上所有绑定的处理函数。但不会执行浏览器默认动作，也不会产生事件冒泡。
+这个方法的行为表现与trigger类似，但有以下三个主要区别： 
+* 第一，他不会触发浏览器默认事件。
+* 第二，只触发jQuery对象集合中第一个元素的事件处理函数。
+* 第三，这个方法的返回的是事件处理函数的返回值，而不是据有可链性的jQuery对象。此外，如果最开始的jQuery对象集合为空，则这个方法返回 undefined 
+*/
+$(对象).triggerHandler("focus");  //不会触发默认行为 进入页面中对象不会获得焦点
+```
+
+## 事件
+
+```js
+change([[data],fn])    //改变事件
+click([[data],fn])     //点击事件
+dblclick([[data],fn])  //双击事件 double click 
+//焦点事件
+focus([[data],fn])     //获取
+blur([[data],fn])      //失去
+focusin([data],fn)     //focusin事件跟focus事件区别在于，他可以在父元素上检测子元素获取焦点的情况。
+focusout([data],fn)    //focusout事件跟blur事件区别在于，他可以在父元素上检测子元素失去焦点的情况。
+//键盘事件
+keydown([[data],fn])   //按下
+keyup([[data],fn])     //弹起
+//鼠标事件
+mousedown([[data],fn]) //按下
+mouseup([[data],fn])   //弹起
+mouseover([[data],fn]) //移入
+mouseout([[data],fn])  //移出
+hover([over,]out)      //切换事件 一个函数时移入移出均为此，两个函数前面是over、后面是out
+mouseenter([[data],fn])//移入 不会事件冒泡
+mouseleave([[data],fn])//移出 不会事件冒泡
+mousemove([[data],fn]) //鼠标移动事件
+//滚动事件
+scroll([[data],fn])    //当用户滚动指定的元素时，会发生scroll事件。
+//提交事件
+submit([[data],fn])    //当提交表单时，会发生submit事件。该事件只适用于表单元素。
+//调整浏览器大小
+resize([[data],fn])    //当调整浏览器窗口的大小时，发生resize事件。
+//文本被选择时
+select([[data],fn])    //当textarea或文本类型的input元素中的文本被选择时，会发生select事件。
+```
+
+## 事件对象
+
+### 阻止默认事件的发生
+
+- event.preventDefault()；
+
+### 阻止事件冒泡
+
+* event.stopPropagation();
