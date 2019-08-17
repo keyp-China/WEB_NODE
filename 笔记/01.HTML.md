@@ -1,0 +1,104 @@
+# 基本结构
+
+```html
+<!DOCTYPE HTML>
+<html>
+	<head>
+        <title></title>
+    </head>
+	<body></body>
+</html>
+```
+
+# 标签分类
+
+* 单标签
+* 双标签
+
+# 标签关系
+
+* 嵌套（包含）关系
+* 并列关系
+
+# 路径
+## 相对路径
+## 绝对路径
+# 常用标签
+## 排版标签
+
+* 标题标签          h1-h6
+* 段落标签          p   
+* 水平线标签      hr
+* 换行标签          br
+
+## 文本格式化标签
+
+* 加粗       strong   b
+* 倾斜        em        i
+* 删除        del        s
+* 下划线    ins        u
+
+## 图像标签
+
+* img
+
+## 链接标签
+
+* a
+  * target  打开方式 
+    self
+    _blank
+    base标签可设置全局打开方式 写在head里
+  * 锚点
+    href="#id"
+
+## 注释标签
+
+* <!-- 注释 -->
+
+# 无语义化标签
+## span 行内元素
+## div 块级元素
+# 列表标签
+## 无序列表 ul>li
+## 有序列表 ol>li
+## 自定义列表 dl>dt+dd
+
+# table表格
+
+* thead+tbody
+* table>tr>td
+  * th是td的特殊形式  代表是表头单元格
+* 表格属性
+  * border 边框
+  * align 对齐方式
+  * cellspacing 单元格与单元格之间的距离
+  * cellpadding 单元格与边框之间的距离
+* 表格标题 caption
+  * 写在table标签内的最顶端
+* 合并单元格
+  * rowspan  合并行
+  * colspan    合并列
+
+# form表单
+## input
+
+* text
+* password
+* radio
+* checkbox
+* button
+* submit
+* reset
+
+## label
+## textarea
+## select > aption
+
+# HTML5新增标签
+## header 头部标签
+##  footer  底部标签
+## section 区块标签
+## article  文本内容标签
+## aside   侧边标签
+## nav 导航

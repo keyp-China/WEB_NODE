@@ -1,0 +1,289 @@
+# 移动端基础
+
+## 视口
+
+1. 布局视口
+   开发所设置的正常宽度
+
+2. 视图视口
+   屏幕上所能看见的区域
+
+3. 理想视口
+   理想状态就是视图视口有多宽，布局视口就有多大
+
+   ```html
+   <!--配置方法：-->
+   <meta name="viewport" content="width=device-width, user-scalable=no,initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+   <!--视口宽度和设备保持一致、不允许用户缩放、默认缩放比例和最大最小缩放比例-->
+   ```
+
+## 多倍图
+
+1. 物理像素   ----屏幕分辨率
+2. 开发像素   ----css中缩写的像素px
+3. 物理像素比
+   1个物理像素=多个开发像素
+   PC端1:1
+4. 物理像素比的影响
+   影响：图片在移动端，因为物理像素比的存在，图片可能会放大失真，影响用户体验
+   解决方案：设计素材人员，在设计图片时，以多倍的方式设置
+
+## 背景图设置大小
+* background-size: width height;
+
+## 移动端开发选择
+1. 单独制作移动端页面（主流）
+2. 响应式页面
+   缺点：制作麻烦， 需要花很大精力去调兼容性问题
+
+## 移动端技术解决方案
+* 移动端浏览器
+   - 移动端浏览器基本以 webkit 内核为主，因此我们就考虑webkit兼容性问题。
+   - 我们可以放心使用 H5 标签和 CSS3 样式。
+   - 同时我们浏览器的私有前缀我们只需要考虑添加 webkit 即可
+
+* css初始化
+
+  * 移动端 CSS 初始化推荐使用 **normalize.css**
+
+* CSS盒子模型
+      box-sizing: border-box;
+      --传统盒子模型：content-box;
+
+* 特殊样式
+
+   ```css
+   /* CSS3盒子模型 */
+   -webkit-box-sizing: border-box;   
+   box-sizing: border-box;
+   /* 点击高亮我们需要清除清除  设置为transparent 完成透明 */
+   -webkit-tap-highlight-color: transparent;
+   /* 在移动端浏览器默认的外观在iOS上加上这个属性才能给按钮和输入框自定义样式 */
+   -webkit-appearance: none;
+   /* 禁用长按页面时的弹出菜单 */
+   img,a { -webkit-touch-callout: none; }
+   ```
+
+* 图片格式
+     DPG图片(京东自主研发)
+     webp图片(谷歌开发)
+
+* H5具有语义的标签
+
+  * header 头部标签
+   * footer  底部标签
+   * section 区块标签
+   * article  文本内容标签
+   * aside   侧边标签
+   * nav 导航
+
+# 一、单独制作移动端布局
+
+## 1.流式布局(百分比布局)
+
+页面中的值都是由百分数来控制宽度
+
+## 2.flex弹性布局(强烈推荐)
+
+### 布局原理：
+通过给父盒子添加flex属性，来控制子盒子的位置和排列方式
+
+### 圣杯布局：
+
+一行显示，有固定宽度盒子和伸缩盒子宽度
+
+* 两边定位 父盒子padding
+* flex伸缩布局
+* 两边定位 中间不给宽度值 只给左右margin
+
+### 父项常见属性
+
+```css
+(1)flex-direction★ /*设置主轴的方向*/
+	/*主轴、侧轴*/
+	row(从左到右 默认)
+	column(从上到下)
+(2)justify-content /*设置主轴上的子元素排列方式*/
+	flex-start       /*默认值 从头部开始 延主轴排列*/
+	flex-end         /*从尾部排列*/
+	center           /*在主轴居中对齐*/
+	space-around     /*平分剩余空间*/
+	space-between    /*先两边贴边 在平分剩余空间(重要)*/
+(3)flex-wrap /*设置子元素是否换行*/
+	nowrap   /*默认值，不换行*/
+	wrap     /*换行*/
+(4)align-items★   /*设置侧轴上的子元素排列方式(单行)*/
+	flex-start    /*默认值 侧轴从头开始*/
+	flex-end      /*侧轴从尾部排列*/
+	center        /*侧轴居中*/
+	stretch       /*拉伸，子元素不设置高度 默认是拉伸状态*/
+(5)align-content  /*设置侧轴上的子元素的排列方式(多行)*/
+	flex-start
+	flex-end
+	center
+	space-around
+	space-between
+	stretch
+(6)flex-flow
+	/*属性是 flex-direction 和 flex-wrap 属性的复合属性*/
+	例如：flex-flow:column wrap;
+```
+
+
+
+### 子项常见属性
+
+```css
+(1)flex★
+	/*分配容器的剩余空间份数*/
+(2)align-self    /*控制子项自己在侧轴上的排列方式*/
+	/*属性允许单个项目有与其他项目不一样的对齐方式，可覆盖 align-items 属性。默认值为auto，表示继承父元素的 align-items 属性，如果父元素没有align-items属性，则等同于 stretch。*/
+(3)order /*属性定义项目的排列顺序*/
+	/*数值越小，排列越靠前，默认为0*/
+```
+
+## 3.rem布局
+
+### rem单位
+* 语法：rem:root指HTML的font-size大小
+
+- 特点：绝对唯一控制，接近等比变化的第一步；只要你把PX单位换成rem单位；
+
+### 媒体查询
+* 作用
+
+  * 作用：响应屏幕的变化;
+
+  * 该可以根据屏幕不同的宽，从而获得不同的样式，然后实现不同的样式显示；
+* 语法
+
+```css
+@media mediatype and|not|only (media feature) {
+ 	CSS-Code;
+}
+```
+
+### Less预编译语言
+常见的CSS预处理器：Sass、Less、Stylus
+
+* 变量 
+* 嵌套
+* 运算
+
+### 布局一:rem+媒体查询+less 方案
+
+操作！！！
+
+- 第一步：
+  - 原稿实现：先拿到设计稿：750px；页面上所有的元素，在750px设计稿上进行测量，代码实现；（流式、flex）
+- 第二步：用rem替换px
+  - 准备各个档位下的rem：提前准备好各个档位下的HTML 的font-size大小；
+  - 拿到当前设计稿屏幕尺寸对应的rem背后的值：
+    - 因为我现在是750px的设计稿，
+    - 可以得到750px这个尺寸属于的档位下的  HTML 的font-size大小，
+    - 也就是750px设计稿下的1rem值背后的代表的值是多少。
+  - 计算比例：把页面刚才所有的元素的PX值替换为 rem 比例值；（82px  82rem/75= 1.785rem ）;
+  - 达到目标：那么，屏变化时，1rem也会变化，自然就是等比缩放；
+
+### 布局二：rem+flexible.js(推荐)
+操作！！！
+
+- 第一步：
+  - 原稿实现：先拿到设计稿：750px；页面上所有的元素，在750px设计稿上进行测量，代码实现；（流式、flex）
+- 第二步：
+  - 准备各个档位下的rem：这个不需要准备，JS帮我们实现每个屏幕都有自己的font-size
+  - 拿到当前设计稿下的1rem代表多少PX值：因为我现在是750px的设计稿，所以可以得到750px这个尺寸属于的档位下的HTML 的font-size大小，也就是750px设计稿下的1rem值。
+  - 计算比例：把页面刚才所有的元素的PX值替换为 rem 比例值；（82px 想转换成多少rem ,75px = 1rem  82rem/75）;
+  - 达到目标：那么，屏变化时，1rem(基础块)也会变化，自然就是等比缩放；
+
+### 两种方案对比
+
+- 相同：都是对font-size实现控制，1rem（基础块）变化，实现等比效果；
+- 不同：
+  1. rem+媒体查询+less：通过设置不同的档位下，设置不同的1rem值；效果为阶梯式变化；
+  2. flexible.js+rem：通过JS设置不同的1rem值，效果为连续变化；这个看起来更为连贯，适配任何屏幕
+
+# 二、响应式页面兼容移动端
+
+## 响应式原理
+* 响应式原理：媒体查询+百分比布局(浮动)；rem布局也有媒体查询（设置HTML 字体大小 1rem=多少px），但是rem布局更侧重于等比变化；
+
+* 档位划分
+  媒体查询：档位划分；市场上默认的划分；三个节点、四个档位
+
+  * w<768  超小屏(xs : extra small)(手机学习rem布局里面的档位划分都是在这个范围）
+
+  * 768<= w <992  小屏设备（sm : small)（平板）
+
+  * 992<= w <1200  中等屏幕（md: medium)（桌面显示器）
+
+  * 1200<=w  大宽屏设备（lg: large（大桌面显示器）
+
+  语法：用媒体查询设置不同的版心和不同的内置类
+
+## Bootstarp框架
+### 介绍
+
+- Bootstrap 来自 Twitter（推特），是目前最受欢迎的**前端响应式**框架。墙掉；
+- 网址：
+  - 中文网：http://www.bootcss.com/
+  - 官网：http://getbootstrap.com/
+  - 推荐：http://bootstrap.css88.com/
+
+### 初始化
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <!-- 要求 当前网页 使用 IE浏览器 最高版本的内核 来渲染 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 视口的设置：视口的宽度和设备一致，默认的缩放比例和PC端一致，用户不能自行缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap Template</title>
+    <!-- Bootstrap 的文件引入 已经有初始化文件 Normalize.css-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">   
+    <!--解决ie9以下浏览器对 html5新增标签的不识别，并导致CSS不起作用的问题-->
+    <!--解决ie9以下浏览器对 css3 Media Query  的不识别 -->   
+    <!-- 条件注释:小于IE9的版本 -->
+    <!--[if lt IE 9]>
+      <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <h1>你好，世界！</h1>
+  </body>
+</html>
+```
+
+### 容器及预制类
+* 版心：和市场默认一样的；
+
+- 预制类：修改，重新起个类名；
+### 栅格系统
+* 作用：
+  * 设置子元素在不同档位下的布局；
+  * 分成12份；
+  * 提前写好了这些列的分配的类名；
+* 特点：
+  * 容器：有左右15padding
+  * 盒子col-lg-：有左右15padding
+  * 去除15padding：加div.row(左右-15pxmargin值，向外撑)
+  * 所有元素：CSS3盒子模型；
+* 列嵌套
+     		- 操作：可以在已经分好的子元素中内部，继续进行列的划分（共12份）；
+   * 效果：继续在分好的布局内继续划分；
+* 列偏移
+     - 操作：是划分好的子项进行列的份数偏移；
+     - 场景：左右布局，居中布局；
+     - col-md-offset-2
+* 列顺序(了解)
+    - 操作：划分份数的子项，按照列的份数进行排序；
+    - 效果：左右布局改变顺序，不常用
+### 响应式工具
+* 预制类：可以控制子元素在档位下进行显示或隐藏；
+* hidden-xs  只是xs时隐藏
+* visible-xs  只是xs时显示
+
