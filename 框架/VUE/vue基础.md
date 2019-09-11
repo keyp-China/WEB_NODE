@@ -607,14 +607,14 @@
 >
 > ```js
 > // 全局自定义指令
-> Vue.directive('mytive', (el, binding) => {
+> Vue.directive('mydirective', (el, binding) => {
 >   //el, binding, vnode, oldVnode  钩子函数的四个参数
 >   console.log(el, binding);
 > })
 > 
 > //局部自定义属性
 >  directives: {
->      mytive(el, binding) {
+>      mydirective(el, binding) {
 >          console.log(el, binding);
 >      }
 >  }
@@ -716,4 +716,51 @@
 > ```html
 > <p>{{ value | toUpper(2) | reverse }}</p>    // 语法 多个过滤器用 | (管道符)分割
 > ```
+
+# 6. 计算属性 computed
+
+> - 场景：当表达式过于复杂的情况下 可以采用计算属性 对于任何**`复杂逻辑`**都可以采用计算属性
+> - 使用：在Vue实例选项中 定义 computed:{ 计算属性名: **`带返回值`**的函数 }
+> - 说明：计算属性的值 依赖 数据对象中的值  **数据对象发生改变 => 计算属性发生改变=> 视图改变**
+> - methods 和 计算属性的区别？
+>   - methods 每次都会执行  
+>   - 计算属性 会每次比较更新前后的值 如果前后一致 则不会引起视图变化
+>   - methods每次都会执行 性能较计算属性较差
+
+```html
+<body>
+    <div id="app">
+        <!-- 计算属性不需要调用形式的写法  而methods方法必须采用 方法() 调用的形式 -->
+        <p>{{getMethod()}}</p> <!-- 方法 每次改变任意数据都会渲染页面 -->
+        <p>{{getComputed}}</p> <!-- 计算属性 只有参与预算的数据改变才会重新渲染页面 -->  
+    </div>
+    <script src="./vue.js"></script>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                name: "zs"
+            },
+            methods: {
+                getMethod() { return this.name }
+            },
+            computed: {
+                getComputed() { return this.name }
+            }
+        });
+    </script>
+</body>
+```
+
+
+
+# 7. 监听 watch
+
+> 场景: 当需要根据**`数据变化`** 进行相应业务操作，且该操作是**`异步操作`**时，**`计算属性不能再使用`**,可以使用监听watch特性
+>
+> - 计算属性和watch区别
+>   - 计算属性 必须要有返回值 所以说不能写异步请求 因为有人用它的返回值(插值表达式)
+>   - watch选项中可以写很多逻辑 不需要返回值 因为没有人用它的返回值
+
+
 
