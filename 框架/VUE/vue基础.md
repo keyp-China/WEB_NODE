@@ -577,6 +577,49 @@
 </script>
 ```
 
+## 4.11 directive 自定义指令
+
+> - 使用场景：需要对普通 DOM 元素进行操作，这时候就会用到自定义指令 
+> - 基于Vue.directive自定义的指令，**`内部字母不能大写`**
+> - 分类：**`全局注册`**和**`局部注册`**
+>
+> ```js
+> // 注册一个全局自定义指令 `v-focus`  在实例化之前全局注册
+> Vue.directive('mydirective', {
+>   // 当被绑定的元素插入到 DOM 中时……
+>   inserted: function (el) {
+>     // el 当前元素
+>   }
+> })
+> //###############################################
+> //组件中注册一个局部自定指令   在实例化内部属性与data/methods同级上注册
+> directives: {
+>   mydirective: {
+>     // 指令的定义
+>     inserted: function (el) {
+>       // el 当前元素
+>     }
+>   }
+> }
+> ```
+>
+> **简写**
+>
+> ```js
+> // 全局自定义指令
+> Vue.directive('mytive', (el, binding) => {
+>   //el, binding, vnode, oldVnode  钩子函数的四个参数
+>   console.log(el, binding);
+> })
+> 
+> //局部自定义属性
+>  directives: {
+>      mytive(el, binding) {
+>          console.log(el, binding);
+>      }
+>  }
+> ```
+
 # 5. 过滤器 filter
 
 > - 场景：data中的数据格式(日期格式/货币格式/大小写等)需要处理时
