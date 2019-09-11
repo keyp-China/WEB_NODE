@@ -553,6 +553,30 @@
 > </div>
 > ```
 
+## 4.10. ref 操作 DOM
+
+> - 作用: **`通过 ref 特性可以获取元素的dom对象`**
+> - 使用:  给元素定义 ref属性, 然后通过$refs.名称 来获取dom对象
+> - **`$refs`**是vue实例的属性 
+> - $data / $event => $开头的属性和方法都是Vue实例的方法和属性
+
+```html
+<div id="app">
+    <!-- 定义 ref -->
+    <input type="text" ref="myInput">
+</div>
+<script src="./vue.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {}
+    });
+    // 获取 DOM对象 并赋值value
+    vm.$refs.myInput.value = "张三";
+</script>
+```
+
 # 5. 过滤器 filter
 
 > - 场景：data中的数据格式(日期格式/货币格式/大小写等)需要处理时
@@ -650,26 +674,3 @@
 > <p>{{ value | toUpper(2) | reverse }}</p>    // 语法 多个过滤器用 | (管道符)分割
 > ```
 
-# 6. ref 操作 DOM
-
-> - 作用: 通过ref特性可以获取元素的dom对象
-> - 使用:  给元素定义 ref属性, 然后通过$refs.名称 来获取dom对象
-> - $refs是vue实例的属性 
-> -  $data / $event => $开头的属性和方法都是Vue实例的方法和属性
-
-```html
-<div id="app">
-    <!-- 定义 ref -->
-    <input type="text" ref="myInput">
-</div>
-<script src="./vue.js"></script>
-<script>
-    var vm = new Vue({
-        el: '#app',
-        data: {},
-        methods: {}
-    });
-    // 获取 DOM对象 并赋值value
-    vm.$refs.myInput.value = "张三";
-</script>
-```
