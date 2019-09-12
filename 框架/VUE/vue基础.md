@@ -240,7 +240,7 @@
 - 事件修饰符(可不写)
   - `.once` - 只触发一次回调。
   - `.prevent` -取消默认行为  相当于调用 `event.preventDefault()`。
-  - `.stop` -阻止默认行为  相当于调用 `event.stopPropagation()`。
+  - `.stop` -阻止事件冒泡  相当于调用 `event.stopPropagation()`。
 
   按键修饰符
 
@@ -584,22 +584,24 @@
 > - 分类：**`全局注册`**和**`局部注册`**
 >
 > ```js
-> // 注册一个全局自定义指令 `v-focus`  在实例化之前全局注册
+> // 注册一个全局自定义指令 `v-mydirective`  在实例化之前全局注册 (指令名称，指令对象)
 > Vue.directive('mydirective', {
->   // 当被绑定的元素插入到 DOM 中时……
->   inserted: function (el) {
->     // el 当前元素
->   }
+>     // 当被绑定的元素插入到 DOM 中时……
+>     inserted: function (el,binding) { //可以省略  :function
+>      	// el 当前DOM元素
+>         // binding 传递的参数对象 binding.value
+>     }
 > })
 > //###############################################
 > //组件中注册一个局部自定指令   在实例化内部属性与data/methods同级上注册
 > directives: {
->   mydirective: {
->     // 指令的定义
->     inserted: function (el) {
->       // el 当前元素
+>     mydirective: {
+>         // 指令的定义
+>         inserted: function (el,binding) {  //可以省略  :function
+>             // el 当前DOM元素
+>             // binding 传递的参数对象 binding.value
+>         }
 >     }
->   }
 > }
 > ```
 >
@@ -607,17 +609,17 @@
 >
 > ```js
 > // 全局自定义指令
-> Vue.directive('mydirective', (el, binding) => {
->   //el, binding, vnode, oldVnode  钩子函数的四个参数
->   console.log(el, binding);
+> Vue.directive('mydirective', function(el, binding){
+>     //el, binding, vnode, oldVnode  钩子函数的四个参数
+>     console.log(el, binding);
 > })
 > 
 > //局部自定义属性
->  directives: {
->      mydirective(el, binding) {
->          console.log(el, binding);
->      }
->  }
+> directives: {
+>   mydirective(el, binding) {
+>       console.log(el, binding);
+>   }
+> }
 > ```
 
 # 5. 过滤器 filter
@@ -719,20 +721,24 @@
 
 # 6. 计算属性 computed
 
-> - 场景：当表达式过于复杂的情况下 可以采用计算属性 对于任何**`复杂逻辑`**都可以采用计算属性
-> - 使用：在Vue实例选项中 定义 computed:{ 计算属性名: **`带返回值`**的函数 }
-> - 说明：计算属性的值 依赖 数据对象中的值  **数据对象发生改变 => 计算属性发生改变=> 视图改变**
-> - methods 和 计算属性的区别？
+> - 场景:当(插值表达式/v-bind表达式)过于复杂的情况下 可以采用计算属性 对于任何**`复杂逻辑`**都可以采用计算属性,**`简单逻辑也可以采用计算属性`**
+> - 使用: 在Vue实例选项中 定义 computed:{ (key)计算属性名: **`带返回值`**的函数 }
+> - 说明: 计算属性的值 依赖 数据对象中的值  **数据对象发生改变** => **计算属性发生改变**=> **视图改变**
+> - methods 和 计算属性的区别
 >   - methods 每次都会执行  
->   - 计算属性 会每次比较更新前后的值 如果前后一致 则不会引起视图变化
->   - methods每次都会执行 性能较计算属性较差
+>   - 计算属性 每计算一次 都会讲结果缓存,如果 data中的数据没变化,则直接从缓存中取数据
+>   - 如果 data中变化了 , 则会执行 新的计算方法 => 缓存
+>   - 计算属性 会每次比较**`data更新`**前后的值 如果前后一致 则不会引起视图变化
+> - methods每次都会执行 性能较计算属性较差
+> - 计算属性是有缓存机制的,更智能化 ,更有效率
+> - 由于计算属性中 要return 值 => 立刻返回 => 同步/异步 => 计算属性方法 => **`必须写同步代码`**
 
 ```html
 <body>
     <div id="app">
         <!-- 计算属性不需要调用形式的写法  而methods方法必须采用 方法() 调用的形式 -->
-        <p>{{getMethod()}}</p> <!-- 方法 每次改变任意数据都会渲染页面 -->
-        <p>{{getComputed}}</p> <!-- 计算属性 只有参与预算的数据改变才会重新渲染页面 -->  
+        <p>{{getMethod()}}</p> <!-- 方法 -->
+        <p>{{getComputed}}</p> <!-- 计算属性 -->  
     </div>
     <script src="./vue.js"></script>
     <script>
@@ -761,6 +767,127 @@
 > - 计算属性和watch区别
 >   - 计算属性 必须要有返回值 所以说不能写异步请求 因为有人用它的返回值(插值表达式)
 >   - watch选项中可以写很多逻辑 不需要返回值 因为没有人用它的返回值
+>   - watch=> 是监听data数据 中数据项的变化对象 => data中数据变化  => watch 监控函数执行 =>监控函数 
+>   - 监控函数 =>  newValue.oldValue
+>   - watch选项不需要返回值 不需要return  只需要在函数体中执行对应的逻辑即可\
+>   - watch:  {  data属性名(监视谁写谁的名字): function(newValue(新值),oldValue(旧值)){} } 
+
+# 8. Vue中实现发送网络请求
+
+> 在Vue.js中发送网络请求本质还是ajax，我们可以使用插件方便操作。
+>
+> 1. vue-resource: Vue.js的插件，已经不维护，不推荐使用
+>
+> 2. [axios](https://www.kancloud.cn/yunye/axios/234845) :**不是vue的插件**，可以在任何地方使用，**`推荐`**
+>
+>    说明: 既可以在浏览器端又可以在node.js中使用的发送http请求的库，**`支持Promise`**，不支持jsonp
+>
+>    如果遇到jsonp请求, 可以使用插件 `jsonp` 实现
+>
+>    axios 返回的是一个promise对象
+
+## 8.1 json-server工具的使用
+
+> - 目的: 没有后端的支撑下 ,前端难以为继,json-server可以快速构建一个后台的接口服务,供前端调用
+> - mock => 模拟数据 
+> - json-server 是一个命令行工具 可以json文件变成接口文件 
+> - json-server遵循**`restful`**接口规则
+>
+> ```bash
+> ## 安装
+> npm i -g  json-server
+> ```
+>
+> 新建一个json文件 xxx.json，并在相对目录下运行命令行命令
+>
+> json文件格式 
+>
+> ```json
+> {
+>     //表名
+>     "brands": [{
+>             "name": "苹果",
+>             "date": "2018-05-30T08:07:20.089Z",
+>             "id": 2
+>         },
+>         {
+>             "name": "小米",
+>             "date": "2018-07-04T08:59:51.200Z",
+>             "id": 4
+>         },
+>         {
+>             "name": "华为",
+>             "date": "2019-07-14T04:04:56.599Z",
+>             "id": 5
+>         }
+>     ]
+> }
+> ```
+>
+> 监视文件
+>
+> ```bash
+> json-server --watch db.json
+> ```
+
+## 8.2 RESTFUL的接口规则
+
+> - RESTful是一套**`接口设计规范`**
+> - 用**`不同的请求类型`**发送**`同样一个请求标识`** 所对应的处理是`不同的`
+> - 同样的请求标识 => 相同的请求地址**`url`**
+> - 通过Http请求的不同类型(POST/GET/PUT/DELETE/)来判断是什么业务操作(CRUD ) 
+> - CRUD => 增删改查 => C =>Create(增)  R => Read(查)    U => UPDATE(改)  D =>DELETE(删)
+> - json-server应用了RESTful规范
+
+**HTTP方法规则举例**
+
+| **HTTP方法** | **数据处理** | **说明**                                           |
+| ------------ | ------------ | -------------------------------------------------- |
+| **POST**     | Create       | 新增一个没有id的资源                               |
+| **GET**      | Read         | 取得一个或多个资源                                 |
+| **PUT**      | Update       | 更新一个资源。或新增一个含 id 资源(如果 id 不存在) |
+| **DELETE**   | Delete       | 删除一个资源                                       |
+
+1. 查询数据  GET  /brands 获取db.json下brands对应的所有数据 **`列表`**
+2. GET /brands/1 查询id=1数据 **`单条`**
+3. 删除数据 DELETE   /brands/1 删除id=1数据
+4. 修改数据 PUT  /brands/1 请求体对象 {name:'李四' }
+5. 上传/添加 POST /brands 请求体  {name:'李四'}
+
+> PUT和POST用法一样  请求体 {name:"张三",age: 18, sex:'男'}
+
+5. 查询 GET /brands?title_like=关键字  -> 模糊搜索
+
+# 9. axios 简单使用
+
+> Axios 是一个基于 promise 的 HTTP 库，可以用在浏览器和 node.js 中。
+>
+> - 除去post请求 ,所有接口的正确请求返回码都是**`200`** 但是post的状态码是**`201`**
+> - 本地引入axios文件
+> - 在npm 中引入axios文件
+>
+> ```js
+> axios.get(url).then((res) => {
+>     // 请求成功 会来到这  res响应体
+> }).catch((err) => {
+>     // 请求失败 会来到这 处理err对象
+> });
+> ```
+
+```js
+axios({
+    url:"",
+    type:"get", //默认get
+})
+
+//#######################
+axios.get(url);
+axios.post(url,{});
+axios.put(url,{});
+axios.delete(url);
+```
+
+
 
 
 
