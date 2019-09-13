@@ -887,7 +887,54 @@ axios.put(url,{});
 axios.delete(url);
 ```
 
+# 10. 组件
 
+> 场景：重复的页面结构,数据,逻辑 都可以抽提成一个组件  
+>
+> 对于复杂的结构来说 都可以通过抽提组件的方式 来简化开发过程
+>
+> - 简单 高效 不重复
+>
+> 组件特点：组件是一个**`特殊的 Vue实例`**
+>
+> 和实例相似之处： data/methods/computed/watch  等一应俱全  
+>
+> - vue实例有**`el`**选项  组件实例没有el， 但是**`templete`**页面结构
+>
+> **注意** 值得注意的是  data和Vue实例的区别为 组件中data为一个函数   没有el选项 
+>
+> template 代表其页面结构 (**`有且只要一个根元素`**)
+>
+> 每个组件都是**`独立`**的 运行作用域  **`数据 逻辑没有任何关联`**
+>
+> data () {  return {  数据属性 } }
 
+## 10.1 全局组件
 
+```js
+Vue.component("temp-counter", {
+    // template 必须有且只有一个根元素
+    template: `
+        <div>
+            <button @click="sub">减</button>
+            <span>{{count}}</span>
+            <button @click="add">加</button>
+        </div>
+    `,
+    // 注意 data中必须为一个返回对象的函数
+    data() {
+        return {
+            count: 1
+        };
+    },
+    methods: {
+        sub() {
+            this.count--;
+        },
+        add() {
+            this.count++;
+        }
+    }
+});
+```
 
