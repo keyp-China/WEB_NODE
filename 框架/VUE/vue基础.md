@@ -1164,3 +1164,134 @@ Vue.component("parentB", {
 > - Vue-Router 是 [Vue.js](http://cn.vuejs.org/) 官方的**`路由管理器`**。它和 Vue.js 的核心深度集成，让构建单页面应用变得易如反掌 
 > - 实现根据不同的**`请求地址`** 而**`显示不同的组件`**
 > - 如果要使用 vue开发项目,**`前端路由`**功能**`必须使用`**vue-router来实现
+
+## 12.1 vue-router 起步
+
+```html
+<div id="app">
+    <!-- 2 设置导航  类似于a标签 不完全等同  a-->
+    <router-link to="/ys">勇士</router-link>
+    <router-link to="/hr">湖人</router-link>
+    <router-link to="/kc">快船</router-link>
+    <router-link to="/hj">火箭</router-link>
+    <!-- 3 容器必须有  承载组件的内容-->
+    <router-view></router-view>
+</div>
+<script src="./vue.js"></script>
+<!-- 1 引入vue-router -->
+<script src="./vue-router.js"></script>
+<script>
+    // 4 实例化一个vue-router对象
+    var router = new VueRouter({
+        // 5 配置路由选项 => 路由表 => hash值对应的组件或者模块
+        routes: [
+            { path: '/ys', component: { template: `<div>勇士</div>` } },
+            { path: '/hr', component: { template: `<div>湖人</div>` } },
+            { path: '/kc', component: { template: `<div>快船</div>` } },
+            { path: '/hj', component: { template: `<div>火箭</div>` } }
+        ]
+    });
+    var vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {},
+        // 6 将路由实例挂载到Vue实例上
+        router
+    });
+</script>
+```
+
+## 12.2 vue-router 动态路由
+
+> - 点击**`列表页`** 跳转到**`详情页`**时,跳转的链接需要**`携带参数`**,会导致**`页面path`**不同
+> - 当**`页面path不同`**却需要对应**`同一个组件`**时,需要用到**`动态路由`**这一概念
+
+> 此时可以通过路由传参来实现，具体步骤如下：
+>
+> name是可以随意命名的,
+>
+> 1. 路由规则中增加参数，在path最后增加 **:`name`**
+>
+> **`注意`**这里的name相当于我们给路由加了参数 叫做**`name`**
+>
+> ```js
+> { path: '/ys/:name', component: team },
+> ```
+>
+> 2. 通过 <router-link> 传参，在路径上传入具体的值(**`实参`**)
+>
+> ```html
+> <router-link to="/ys/湖人">湖人</router-link>
+> ```
+>
+> 3. 在组件内部可以使用，**`this.$route`** 获取当前路由对象  并通过**`params`**获取定义的参数**`name`**
+>
+> ```html
+> var team = { template: `<div>{{this.$route.params.name}}</div>` }
+> ```
+
+## 12.3 vue-router to属性赋值
+
+```html
+<!-- 常规跳转 -->
+<!-- <router-link to="/sport">体育</router-link> -->
+<!-- 变量 -->
+<!-- <router-link :to="path">体育</router-link> -->
+<!-- 根据对象name跳转 -->
+<!-- <router-link :to="{name:'abcdefg'}">体育</router-link> -->
+<!-- 根据对象path跳转 -->
+<!-- <router-link :to="{path:'/sport'}">体育</router-link> -->
+<!-- 带参数的跳转 -->
+<router-link :to="{name:'abcdefg',params:{a:1}}">体育</router-link>
+```
+
+## 12.4 vue-router 重定向(redirect)
+
+> 重定向 拦截谁就在谁的路由中写`** **`redirect`** 
+>
+> **`你希望它去哪就写谁的`** 地址 **`path`**
+>
+> 场景: 当希望某个页面被强制中转时  可采用redirect 进行路由重定向设置
+>
+> ```js
+> {
+>     path: "/sport",
+>     redirect: "/news", // 强制跳转新闻页
+>     component: {
+>     	template: `<div>体育</div>`
+>     }
+> },
+> ```
+
+## 12.5 vue-router 编程式导航
+
+> - 跳转不同的组件 不仅仅可以用router-link 还可以采用**`代码行为`**
+> - (Vue实例)**`this.$router`** 可以拿到当前路由对象的实例
+> - 路由对象的实例方法 有 **`push()  replace()  go(number)`**  
+> - push 方法 相当于往历史记录里推了一条记录 如果点击返回 会回到上一次的地址  相当于 to属性
+> - replace方法 想相当于替换了当前的记录  历史记录并没有多 但是地址会变
+> - go(数字) 代表希望是前进还是回退,当数字大于0 时 就是前进 n(数字)次,小于0时,就是后退n(数字)次
+>
+> ```js
+> goPage() {
+>     // 跳转到新闻页面
+>     this.$router.push({
+>         path: "/news"
+>     });
+>     // 等价于  to="{path:'/news'}"
+> }
+> ```
+
+## 12.6 vue-router routerlink-tag-激活样式 
+
+> * 当前路由在导航中是拥有激活class样式的
+>
+> * 审查导航元素,可以发现 激活样式
+>
+>   **`class名称是可以设置的`**
+>
+>   ```html
+>   <a href="#/news" class="router-link-exact-active router-link-active">新闻</a>
+>   ```
+>
+>   设置激活class样式即可
