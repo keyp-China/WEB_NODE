@@ -1,5 +1,37 @@
 [TOC]
 
+# 0. vue 结构
+
+```HTML
+<body>
+    <div id="app"></div>
+    <script src="./vue.js"></script>
+    <script>
+        var vm = new Vue({
+            el: '#app',     // element
+            template: ``,   // 模板（组件用法）
+            data: {},       // model数据
+            methods: {},    // 方法
+            filters: {},    // 过滤器（局部/全局）
+            directives: {}, // 自定义指令（局部/全局）
+            computed: {},   // 计算属性
+            watch: {},      // 监视
+            components: {}, // 组件
+            router: {},     // 路由  
+            // 8个钩子函数
+            beforeCreate: function () { },
+            created: function () { },  // 创建
+            beforeMount: function () { },
+            mounted: function () { },  // 加载
+            beforeUpdate: function () { },
+            updated: function () { },  // 修改
+            beforeDestory: function () { },
+            destoryed: function () { },// 销毁
+        });
+    </script>
+</body>
+```
+
 # 1. vue 介绍
 
 ## 1.1 vue 简介之前端现状
@@ -909,6 +941,11 @@ axios.delete(url);
 >
 > data () {  return {  数据属性 } }
 
+> 组件化与模块化的区别：
+>
+> * 模块化：是从代码逻辑的角度进行划分的；方便代码分层开发，保证每个功能模块的职能单一。
+> * 组件化：是从UI界面的角度进行划分的；前端的组件化，方便UI组件的重复使用。
+
 ## 10.1 全局组件
 
 ```js
@@ -938,3 +975,192 @@ Vue.component("temp-counter", {
 });
 ```
 
+## 10.2 局部组件
+
+```js
+var vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {},
+        components: {
+        textA: {
+        	template: `<div>我是局部组件</div>`,
+            data(){
+                return{name:'zs',age=18}
+            },
+            methods{}
+        }
+    }
+});
+```
+
+## 10.3 组件嵌套
+
+> - 我们可以在new Vue()实例中使用自定义组件,
+> - 组件相当于特殊的vue实例独享，所以也可以**`在组件中注册组件`**
+> - **`在谁的组件对象中注册,就只能在谁的模板里使用该标签(局部)`**
+> - 也可以在注册自定义组件时,嵌套另一个自定义组件,也就是父子组件的关系
+> - 组件嵌套 =>  大组件 => 若干个小组件 =>  更多小组件  => 各司其职
+
+```js
+Vue.component("parentB", {
+    template: 
+        `<div>
+            我是父级组件
+            <child-a></child-a>
+        </div>`,
+     components: {
+         //父级内再次注册组件
+        "childA": {
+            template:
+                `<div>
+                	<button>子级按钮</button>
+                </div>`
+        }
+     }
+});
+```
+
+## 10.4 组件通信的几种情况
+
+> 目标`**：了解组件通信的几种情况（
+>
+> - 父组件  =>  子组件   需要父组件将数据传给子组件
+> - 子组件  =>  父组件  子组件也可以传数据给父组件
+> - 兄弟组件1 =》兄弟组件2 **`eventBus`**  **`Vuex`**
+
+## 10.5 父组件给子组件传值Props
+
+> 使用属性 **`data/methods/computed/props`** 都代理给了Vue实例this
+>
+> - props作用: 接收父组件传递的数据
+> - props就是父组件给**`子组件标签`**上定义的**`属性`**
+>   - props是组件的选项  定义接收属性
+>   - props的值可以是字符串数组 props:["list"]  
+>   - props数组里面的元素称之为prop(属性) 属性=?值
+>   - prop的值来源于外部的(组件的外部)
+>   - prop是组件的属性->自定义标签的属性
+>   - prop的赋值位置(在使用组件时,通过标签属性去赋值)
+>   - prop的用法和data中的数据用法一样
+> - 注意：
+>   - `父组件传递给子组件的数据是`只读的,即**`只可以用,不可以改`**
+>   - 用props完成父组件给子组件传值  传值的属性都是定义在 子组件的标签上,可以采用v-bind的形式传递动态值
+>   - 定义props属性 在标签上定义属性  v-bind传递动态值
+>   - 在子组件中声明接收的属性
+>   - 在子组件中使用 组件 记住 属性只可以用 不可改
+
+```html
+<div id="app">
+    <!-- 1. 定义prop的属性  把父元素的data值放入属性中（名字不能与子组件的 data/methods/computed 相同）-->
+    <abc :list="cityList"></abc>
+</div>
+<script src="./vue.js"></script>
+<script>
+   var vm = new Vue({
+      el: '#app',
+      data: {
+          cityList: ['北京', "上海", "天津"]
+      },
+      methods: {},
+      components: {
+          abc: {
+              // 3. 引用父组件传过来的属性
+              template: `
+				<ul>
+					<li v-for="item in list">{{item}}</li>
+    			</ul>
+			  `,
+              // 2. 用字符串数组接收父元素传的值 数组中的字符串与prop定义的属性名对应
+              props: ["list"]
+            }
+      	}
+    });
+</script>
+```
+
+## 10.6 子组件给父组件传值(自定义事件)
+
+> - 可通过在子组件中触发**`$emit`**事件,然后在当前组件实例中监视此事件 进行追踪
+> - **`$emit是在当前组件实例抛出一个事件`**
+> - **`监听谁的实例事件,就写在谁的标签上`**
+> - $emit触发的事件,只能在当前实例监听,因为是在当前实例触发的
+
+```html
+<div id="app">
+    <!-- 3. 用子组件传递的当事件进行监听事件 -->
+    <abc @selectcity="showname" v-for="item in cityList" :cityname="item" :ckname="ckname"></abc>
+</div>
+<script src="./vue.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            cityList: ['北京', "上海", "天津"],
+            ckname: ""
+        },
+        methods: {
+            // 4. 执行监听事件函数
+            showname(cityname) {
+                this.ckname = cityname;
+            }
+        },
+        components: {
+            abc: {
+                // 1. 注册一个点击事件
+                template: `<span @click="fn" :class="{select:ckname==cityname}">{{cityname}}</span>`,
+                props: ["cityname", "ckname"],
+                methods: {
+                    fn() {
+                        // 2. 执行点击事件方法 用vm实例的$emit属性来向父组件传值（自定义事件名，传递的属性）
+                        this.$emit("selectcity", this.cityname);
+                    }
+                }
+            }
+        }
+    });
+</script>
+```
+
+# 11. 单页应用-SPA
+
+## SPA 特点
+
+> single page application => 单页应用 =>Vue为单页应用而生
+>
+> - 传统模式 每个页面及其内容都需要从服务器**`一次次请求`**  如果网络差, 体验则会感觉很慢
+> - spa模式, **`第一次加载`** 会将所有的资源都请求到页面 模块之间切换**`不会再请求`**服务器
+>
+> SPA 优点：
+>
+>  	1. 速度快,**`切换模块不需要经过网络请求`**,**`用户体验好`**,因为前段操作几乎感受不到网络的延迟
+>  	2. 完全**`组件化`**开发 ,由于**`只有一个页面`**,所以原来属于一个个页面的工作被归类为一个个**`组件`**.
+>
+> SPA 缺点：
+>
+>  	1. **`首屏加载慢`**->**`按需加载`** 不刷新页面 只请求js模块
+>  	2. **`不利于SEO`**->**`服务端渲染`**(node->自己写路由->express-art-template+res.render())
+>  	3. 开发难度高(框架) 相对于传统模式,有一些学习成本和应用成本
+
+## SPA 实现原理
+
+> **`目标`** 掌握前段SPA的实现原理
+>
+> - SPA要实现 能够在**`前端自由切换模块`** 
+> - SPA要能**`记忆当前切换的模块`**,并且刷新页面模块依然还在当前视图
+> - SPA要实现在**`前端切换模块`**时,不能**`引起页面刷新`**,否则页面内容会被重置
+>
+> **`结论`**
+>
+> - 可以通过页面地址的**`锚链接`**来实现
+> - hash(锚链接)位于链接地址 **`#`**之后
+> - hash值的改变**`不会触发`**页面刷新
+> - hash值是url地址的一部分,会存储在页面地址上 我们**`可以通过 window.location.hash 获取`**到
+> - 可以通过**`事件 onhashchange 监听`**hash值得改变
+> - 拿到了**`hash值`**,就可以根据不同的hash值进行不同的**`模块切换`**
+> - **`前端路由`** 
+
+# 12. Vue Router
+
+> - Vue-Router 是 [Vue.js](http://cn.vuejs.org/) 官方的**`路由管理器`**。它和 Vue.js 的核心深度集成，让构建单页面应用变得易如反掌 
+> - 实现根据不同的**`请求地址`** 而**`显示不同的组件`**
+> - 如果要使用 vue开发项目,**`前端路由`**功能**`必须使用`**vue-router来实现
