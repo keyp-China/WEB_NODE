@@ -1295,3 +1295,120 @@ Vue.component("parentB", {
 >   ```
 >
 >   设置激活class样式即可
+
+## 12.7 嵌套路由
+
+一级路由里面再加二级路由： 在当前的一级路由下 有一个属性 children；
+
+```html
+<body>
+    <div id="app">
+        <!-- 一级路由 -->
+        <router-link to="/hot">热点</router-link>
+        <router-link to="/edu">教育</router-link>
+        <router-link to="/music">音乐</router-link>
+        <router-link to="/sports">体育</router-link>
+        <router-view></router-view>
+    </div>
+    <script src="./vue.js"></script>
+    <script src="./vue-router.js"></script>
+    <script>
+        var router = new VueRouter({
+            //一级路由
+            routes: [{
+                path: "/",
+                redirect: "hot"
+            }, {
+                path: "/hot",
+                component: { template: `<div>热点</div>` }
+            }, {
+                path: "/edu",
+                component: { template: `<div>教育</div>` }
+            },
+            {
+                path: "/music",
+                component: {
+                   // 二级路由也需要router-view
+                    template: `<div>
+                        音乐
+                        <router-link tag="li" to="/music/gd">古典</router-link>
+                        <router-link tag="li" to="/music/lx">流行</router-link>
+                        <router-link tag="li" to="/music/my">民谣</router-link>
+                        <router-view></router-view>
+                        </div>`,
+                },
+                // 二级路由表 在当前的一级路由下 有一个属性 children
+                children: [
+                    {
+                        path: "",     // 二级路由写空字符串代表默认的二级路由
+                        component: { template: `<div>你喜欢什么音乐？</div>` } 
+                    },
+                    {	// 如果不写斜杠 直接 当前子路由的地址即可
+                        path: 'gd',  
+                        // path: ‘/music/gd’ 全匹配 如果写斜杠 路径必须写全
+                        component: { template: `<div>我爱古典音乐</div>` }
+                    },
+                    {
+                        path: 'lx',
+                        component: { template: `<div>我爱流行音乐</div>` }
+                    },
+                    {
+                        path: 'my',
+                        component: { template: `<div>我爱民谣音乐</div>` }
+                    },
+                ]
+            }, {
+                path: "/sports",
+                component: { template: `<div>体育</div>` }
+            }]
+        });
+        var vm = new Vue({
+            el: '#app',
+            data: {},
+            methods: {},
+            router
+        });
+    </script>
+</body>
+```
+
+# 13. 过渡与动画
+
+在下列情形中，可以给任何元素和组件添加进入/离开过渡
+
+- 条件渲染 (使用 `v-if`)
+- 条件展示 (使用 `v-show`)
+- 动态组件
+- 组件根节点
+
+```html
+<!-- html -->
+<div id="demo">
+  <button v-on:click="show = !show">
+    Toggle
+  </button>
+  <transition name="fade">
+    <p v-if="show">hello</p>
+  </transition>
+</div>
+<!-- js -->
+<script>
+    new Vue({
+          el: '#demo',
+          data: {
+                show: true
+          }
+    })
+</script>
+<!-- css -->
+<style>
+    .fade-enter-active, .fade-leave-active {
+      transition: opacity .5s;
+    }
+    .fade-enter, .fade-leave-to {
+      opacity: 0;
+    }
+</style>
+```
+
+![](images/transition.png)
