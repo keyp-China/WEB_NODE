@@ -1412,3 +1412,14 @@ Vue.component("parentB", {
 ```
 
 ![](images/transition.png)
+
+# 14. 钩子函数
+
+> - 生命周期是指Vue实例或者组件从诞生到消亡经历的每一个阶段，在这些阶段的前后可以设置一些函数当做事件来调用。
+> - 四个阶段 
+> - **实例创建前后**  beforeCreate(**`鸡肋函数`**)=> 很少用  created=> 加载数据  this=>拥有了该有的东西 **`this.$refs(获取不到)`**
+> - **页面渲染前后**  beforeMount(渲染前执行**`this.$refs获取不到`**) =>会用   mounted => 渲染完成 (会用) =>可以获取dom对象  `this.$refs(可以获取到)`
+> - **数据更新前后**  beforeCreate updated  => **`鸡肋函数`** => 监控name的变化=> watch => data中某个数据的变化
+> - **组件销毁前后** beforeDestoty => (销毁之前定义的定时器)  destoryed(**`鸡肋函数`**)
+>
+> ![](images/lifecycle.png)
