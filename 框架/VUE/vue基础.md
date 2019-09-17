@@ -1423,3 +1423,86 @@ Vue.component("parentB", {
 > - **组件销毁前后** beforeDestoty => (销毁之前定义的定时器)  destoryed(**`鸡肋函数`**)
 >
 > ![](images/lifecycle.png)
+
+# 15. Vue 的插槽 solt
+
+## 15.1 默认插槽（匿名）
+
+可以在定义组件的模板中 用到一个**`slot(插槽)`**标签来接收传入的模板内容
+
+```html
+<text-a>给匿名插值</text-a>
+
+<!-- textA组件里设置插槽 -->
+<div>
+    <!-- 设置匿名插槽-->
+   <slot></slot>
+    <!-- 后备内容: 如果组件标签未传入值则默认设置为该值 -->
+   <slot>插槽后备内容</slot>
+</div>
+```
+
+## 15.2 具名插槽
+
+给插槽设置名字
+
+```html
+<div>
+    <text-a slot=“abc”>具名插槽</text-a>
+    <text-a slot=“xyz”></text-a>
+</div>
+
+<!-- textA组件里设置插槽 -->
+<div>
+    <slot name="abc"></slot>
+    <!-- 后备内容 -->
+    <slot name="xyz">插槽后备内容</slot>
+</div>
+```
+
+## 15.3 作用域插槽
+
+```html
+<div><!--slot-scope(作用域插槽) 是接收slot传过来所有属性集合对象-->
+    <text-a slot="abc" slot-scope="obj">{{obj.name1}}</text-a>
+</div>
+
+<!-- textA组件里设置插槽 -->
+<div>
+	<slot name="abc" :name1="zs"></slot>
+</div>
+```
+
+# 16. ElementUI 框架
+
+## 16.1 ElementUI-介绍
+
+- **`目标`**掌握目前Vue框架最火的前端UI框架ElementUI的介绍
+- Element-UI 是 饿了么 前端团队，开源出来的一套 Vue 组件库(针对pc电脑浏览器端)，内部集成了许多项目中可以使用的成熟`组件component`，既增强了用户体验、又加快的开发速度。
+- [ElementUI文档地址](https://element.eleme.cn/#/zh-CN/component/installation)
+
+## 16.2 ElementUI-安装
+
+**`目标`**掌握如何在Vue-cli项目中安装ElementUI框架
+
+- 安装elementUI的方式 分为**`两种`**, 一种在vue-cli脚手架项目中,一种是在页面中**`直接引入`**,这推荐在spa项目中使用**`npm`**直接安装使用
+
+1. 执行指令安装组件库
+
+   ```bash
+   $ npm i element-ui -S
+   ```
+
+2. 在main.js文件中引入elementui模块和注册
+
+3. ![1565165182608](images/element引入.png)
+
+   
+
+4. 在任意位置使用elementUI组件
+
+   ![1565168559472](images/使用elementUI.png)
+
+5. 运行效果
+
+   ![1565168508703](images/elementUI运行结果.png)
