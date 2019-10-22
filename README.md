@@ -17,6 +17,8 @@
 
 [vuex入门](https://github.com/keyp-China/WEB_NODE/blob/master/%E6%A1%86%E6%9E%B6/VUE/vuex%E5%85%A5%E9%97%A8.md)
 
+[vue数据绑定原理](https://github.com/keyp-China/WEB_NODE/blob/master/%E6%A1%86%E6%9E%B6/VUE/vue%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%E5%8E%9F%E7%90%86.md)
+
 
 
 # [TypeScript](https://github.com/keyp-China/WEB_NODE/blob/master/TypeScript/TypeScript.md)
