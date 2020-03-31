@@ -1,0 +1,368 @@
+# webpack介绍
+
+> webpack是静态资源文件**打包机器**
+>
+> 对css文件打包处理
+>
+> 对less文件打包处理
+>
+> 对ttf文件打包处理
+>
+> 对img文件打包处理
+>
+> 对es6、es7做降级处理打包
+>
+> 对vue文件打包处理
+>
+> 以上内容经过webpack可以**一次性**做全部**转码、降级**处理，使得开发速度更高效
+>
+> 并且打包好的文件内容可以供所有浏览器识别使用
+
+# webpack安装
+
+* 全局安装
+
+  ```bash
+  npm i webpack webpack-cli -g
+  ```
+
+* 项目中安装(推荐使用)
+
+  ```bash
+  npm init -y
+  npm i webpack webpack-cli -D
+  ```
+
+# webpack-cli使用
+
+1. 执行`npx webpack`来打包项目(`npx原理就是去找node_modules/.bin 找到webpack.cmd文件执行`)
+
+2. 在package.json里配置
+
+   ```json
+   "scripts":{
+       "build": "webpack"
+   }
+   ```
+
+   执行 `npm run build` 进行打包
+
+`注意：默认会把 ./src 下的index.js进行打包  打包成dist文件夹main.js `
+
+# webpack配置
+
+从 webpack v4.0.0 开始，可以不用引入一个配置文件。然而，webpack 仍然还是高度可配置的。在开始前你需要先理解四个**核心概念**：
+
+- 入口(entry)
+- 输出(output)
+- 加载器(loader)
+- 插件(plugins)
+
+mode(模式)：production生产模式  development开发模式
+
+## 默认配置文件
+
+默认配置文件的名称：`webpack.config.js` or `webpackfile.js`
+
+```js
+var path = require('path')
+
+module.exports = {
+    // 入口函数 默认 './src'
+    entry: './src/main.js',
+    // 出口函数 path必须使用绝对路径 默认filename是main.js
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        // path: path.resolve('dist'),
+        // path: path.join(__dirname, 'dist'),
+        filename: 'bundle.js'
+    },
+    // 模式  默认production
+    mode: 'development'
+}
+```
+
+## 自定义配置文件
+
+1. 执行命令`npx webpack --config xxx.js`
+
+2. package.json
+
+   ```json
+   "scripts":{
+       "build": "webpack --config xxx.js"
+   }
+   ```
+
+   执行 `npm run build`
+
+# 开发时自动编译工具
+
+> 1.webpack's Watch Mode
+>
+> 2.webpack-dev-server（推荐）
+>
+> 3.webpack-dev-middleware
+
+## watch
+
+1. 在webpack命令后加 --watch
+
+   ```json
+   "scripts":{
+       "build": "webpack --config xxx.js",
+       "watch": "webpack --watch"
+   }
+   ```
+
+   执行`npm run watch`
+
+2. 在webpack配置文件中开启watch
+
+   ```js
+   module.exports = {
+       entry: './src/main.js',
+       output: {
+           path: path.resolve(__dirname, 'dist'),
+           filename: 'bundle.js'
+       },
+       mode: 'development',
+       watch: ture  // 开启watch模式
+   }
+   ```
+
+## webpack-dev-server（推荐）
+
+1. 安装devServer:
+
+   webpack-dev-server包依赖于webpack
+
+   `npm i webpack-dev-server -D`
+
+2. 运行devServer
+
+   ① npx webpack-dev-server
+
+   ② package.json配置
+
+   ```json
+   "scripts":{
+       "build": "webpack --config xxx.js",
+       "dev": "webpack-dev-server"
+   }
+   ```
+
+   运行 `npm run dev`
+
+3. 引入文件
+
+   以前引入的是真实的文件 ./dist/bundle.js
+
+   现在引入的文件是内存中虚拟的根目录文件./bundle.js
+
+4. 配置
+
+   ① `npx webpack-dev-server --compress --hot --open --port 8090 --contentBase src`
+
+   ② webpack.config.js
+
+   ```js
+   module.exports = {
+       entry: './src/main.js',
+       output: {
+           path: path.resolve(__dirname, 'dist'),
+           filename: 'bundle.js'
+       },
+       mode: 'development',
+       devServer:{
+           open: true, // 自动打开页面
+           port: 8090, // 端口号默认8080
+           contentBase: 'src', // src当根目录
+           hot: true, // 修改相当于打补丁 更新修改的部分
+           compress: true, // 将文件打包 使文件更小
+       }
+   }
+   ```
+
+## webpack-dev-middleware
+
+webpack-dev-middleware配合express使用，自己创建服务，webpack-dev-middleware是node服务器的中间件
+
+## 总结
+
+开发是自动编译只是开发时更快捷，与文件打包上线无关
+
+# loader
+
+## css文件处理
+
+`npm i css-loader style-loader -D`
+
+```js
+module.exports = {
+    entry: './src/main.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js'
+    },
+    mode: 'development',
+    
+    // loader
+    rules: [
+        {
+            test: /\.css$/, // 正则匹配.css结尾的文件
+            use: ['style-loader','css-loader']  // 链式执行顺序从右向左
+        }
+    ]
+}
+```
+
+css-loader：解析css文件
+
+style-loader：将解析完的文件放入html页面中
+
+## less与sass文件处理
+
+```bash
+npm i less less-loader css-loader style-loade -D
+npm i node-sass sass-loader css-loader style-loade -D
+```
+
+```js
+rules: [
+    { test: /\.css$/, use: ['style-loader','css-loader'] },
+    { test:/\.less$/, use: ['style-loader','css-loader','less-loader'] },
+    { test:/\.s(a|c)ss$/, use: ['style-loader','css-loader','sass-loader'] }
+]
+```
+
+## 图片与字体图标处理
+
+```bash
+# file-loader就可以单独完成处理  url-loader是依赖于file-loader的
+npm i file-loader url-loader -D
+```
+
+```js
+// use可以是 []/{}/''
+rules: [
+    // 1.简单使用
+    { test:/\.(jpg|jpeg|png|gif|bmp)$/, use: 'url-loader' }, // 也可以直接用file-loader
+    { test:/\.(woff|woff2|eot|svg|ttf)$/, use: 'url-loader' },
+    
+    // 2.使用配置
+    { 
+        test:/\.(jpg|jpeg|png|gif|bmp)$/, 
+        use: {
+            loader: 'url-loader',
+            options: {
+                limit: 5*1024,  //图片不超过5k转换成bash64  url-loader才可用的属性
+                outputPath: 'images', // 文件输出位置  默认是根目录
+                name: '[name]-[hash:4].[ext]' // 文件名-hash值的前4位.后缀名
+            }
+        } 
+    }
+]
+```
+
+## babel处理js文件
+
+知道babel-loader、preset、plugin 3者的关系和作用
+
+> webpack:是大老板
+>
+> babel-loader：二级承包商，负责找到preset干活
+>
+> preset：对常用plugin做封装，方便安装使用，是三级承包商，负责找到plugin干活，每种新语法都是一个plugin，例如：模板字符串、class、let、箭头函数等
+>
+> plugin：每个es6高标准技术都对应一个plugin做降级处理，最底层苦力
+
+### 简单使用
+
+```bash
+npm i babel-loader @babel/core @babel/preset-env webpack -D
+# @babel/core        --babel核心包
+# @babel/preset-env  --babel基础语法包 许多常用的plugin的集合
+
+npm i @babel/plugin-proposal-class-properties -D
+#  @babel/plugin-proposal-class-properties  --babel生冷语法的一部分
+```
+
+```js
+{ 
+        test:/\.js$/, 
+        use: {
+            loader: 'babel-loader',
+            options: {
+                presets: ['@babel/preset-env'],
+                plugins: ["@babel/plugin-proposal-class-properties"] // 算是扩展的plugin吧
+            },
+            exclude: /node_modules/, // 排除指定目录不处理
+        } 
+    }
+```
+
+### babel-loader的options配置方式
+
+> 1. webpack.config.js 配置文件
+> 2. .babelrc    --格式为json格式
+> 3. babel.config.js
+> 4. package.json
+
+**.babelrc配置（推荐）**
+
+配置后   webpack中就不写options
+
+```json
+{
+    "presets": ["@babel/preset-env"],
+    "plugins": ["@babel/plugin-proposal-class-properties"]
+}
+```
+
+# source map
+
+开发快速定义到某一行代码
+
+```js
+module.exports = {
+    entry: './src/main.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js'
+    },
+    mode: 'development',
+    
+    devtools: 'cheap-module-source-map'  // 很多选项 一般用这个
+}
+```
+
+# 插件plugins
+
+## html-webpack-plugin
+
+## clear-webpack-plugin
+
+## copy-webpack-plugin
+
+```js
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ClearWebpackPlugin = require('clear-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const webpack = require('webpack')
+module.exports = {
+    plugins: [
+		new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: './src/index.html'
+        }),
+        new ClearWebpackPlugin(),
+        new CopyWebpackPlugin({
+            from: path.join(__dirname,'assets'),
+            to: 'assets'
+        }),
+        new webpack.BannerPlugin('admin')  // webpack内置插件 无需下载安装直接使用 banner写注释的
+    ]
+}
+```
+
